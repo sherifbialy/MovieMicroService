@@ -1,20 +1,16 @@
 package com.sumerge.movie.api;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.sumerge.movie.config.JwtAuthenticationFilter;
 import com.sumerge.movie.config.WireMockConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,7 +21,6 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -131,17 +126,17 @@ class MovieControllerTest {
         Movie movie = new Movie();
         movie.setId(1L);
         movie.setAdult(false);
-        movie.setBackdrop_path("/backdrop1.jpg");
-        movie.setOriginal_language("en");
-        movie.setOriginal_title("Dummy Movie 1");
+        movie.setBackdropPath("/backdrop1.jpg");
+        movie.setOriginalLanguage("en");
+        movie.setOriginalTitle("Dummy Movie 1");
         movie.setOverview("This is a dummy movie 1.");
         movie.setPopularity(7.5);
-        movie.setPoster_path("/poster1.jpg");
-        movie.setRelease_date("2022-01-01");
+        movie.setPosterPath("/poster1.jpg");
+        movie.setReleaseDate("2022-01-01");
         movie.setTitle("Dummy Movie 1");
         movie.setVideo(false);
-        movie.setVote_average(8.0);
-        movie.setVote_count(100);
+        movie.setVoteAverage(8.0);
+        movie.setVoteCount(100);
         return movie;
     }
 
@@ -149,17 +144,17 @@ class MovieControllerTest {
         Movie movie = new Movie();
         movie.setId(2L);
         movie.setAdult(true);
-        movie.setBackdrop_path("/backdrop2.jpg");
-        movie.setOriginal_language("es");
-        movie.setOriginal_title("Dummy Movie 2");
+        movie.setBackdropPath("/backdrop2.jpg");
+        movie.setOriginalLanguage("es");
+        movie.setOriginalTitle("Dummy Movie 2");
         movie.setOverview("This is a dummy movie 2.");
         movie.setPopularity(6.8);
-        movie.setPoster_path("/poster2.jpg");
-        movie.setRelease_date("2022-02-01");
+        movie.setPosterPath("/poster2.jpg");
+        movie.setReleaseDate("2022-02-01");
         movie.setTitle("Dummy Movie 2");
         movie.setVideo(true);
-        movie.setVote_average(7.5);
-        movie.setVote_count(80);
+        movie.setVoteAverage(7.5);
+        movie.setVoteCount(80);
         return movie;
     }
 }
