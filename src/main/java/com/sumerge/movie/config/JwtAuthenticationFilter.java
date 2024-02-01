@@ -51,7 +51,7 @@
 
 
                 response.setStatus(403);
-                return;
+
             }
 
         }

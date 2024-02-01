@@ -1,18 +1,24 @@
 package com.sumerge.movie.api;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.sumerge.movie.config.JwtAuthenticationFilter;
 import com.sumerge.movie.config.WireMockConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,11 +30,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
+@EnableConfigurationProperties
 @ContextConfiguration(classes = {WireMockConfig.class})
 class MovieControllerTest {
 
-    @Autowired
-    private WireMockServer wireMockServer;
+
+
     private MockMvc mockMvc;
 
     @Autowired
@@ -45,15 +52,22 @@ class MovieControllerTest {
    mockMvc= MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
     }
+    @RegisterExtension
+    static WireMockExtension wireMockServer=
+            WireMockExtension.newInstance().options(WireMockConfiguration.wireMockConfig().dynamicPort()).build();
+  @DynamicPropertySource
+   static  void configureProperties(DynamicPropertyRegistry registry){
+      String customPath = "/api/validate";
+      String fullPath = wireMockServer.baseUrl() + customPath;
 
-    @AfterEach
-    void tearDown() {
-        wireMockServer.stop();
-    }
+
+      registry.add("myapp.auth_endpoint", () -> fullPath);
+  }
+
 
     @Test
     void getMoviesWithoutFilter() throws Exception {
-
+       //System.setProperty()
 
 
         Movie movie1=createDummyMovie1();
@@ -74,6 +88,7 @@ class MovieControllerTest {
     @Test
     void getMoviesWithFilterWithoutToken() throws Exception {
         mockMvc= MockMvcBuilders.webAppContextSetup(webApplicationContext).addFilter(jwtAuthenticationFilter).build();
+        wireMockServer.stubFor(get("/api/validate").willReturn(aResponse().withStatus(403)));
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/movies?page=1&pageSize=2")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -100,6 +115,7 @@ class MovieControllerTest {
 
     @Test
     void getOneMovieWithFilterWithoutToken() throws Exception {
+        wireMockServer.stubFor(get("/api/validate").willReturn(aResponse().withStatus(403)));
         mockMvc= MockMvcBuilders.webAppContextSetup(webApplicationContext).addFilter(jwtAuthenticationFilter).build();
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/movies/1")
@@ -111,7 +127,8 @@ class MovieControllerTest {
 
     @Test
     void getMoviesWithValidToken() throws Exception {
-        this.wireMockServer.stubFor(get("/api/validate").willReturn(aResponse().withStatus(200)));
+
+        wireMockServer.stubFor(get("/api/validate").willReturn(aResponse().withStatus(200)));
         mockMvc= MockMvcBuilders.webAppContextSetup(webApplicationContext).addFilter(jwtAuthenticationFilter).build();
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/movies/1")
