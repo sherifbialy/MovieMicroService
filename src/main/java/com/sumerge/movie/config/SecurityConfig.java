@@ -21,10 +21,7 @@ public class SecurityConfig {
 
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/movies/**").authenticated()
-//                        .requestMatchers("/api/validate").authenticated()
-//                )
+
 
                 .addFilterBefore( jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
